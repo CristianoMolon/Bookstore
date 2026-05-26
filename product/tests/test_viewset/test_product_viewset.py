@@ -52,7 +52,7 @@ class TestProductViewSet(APITestCase):
             content_type='application/json'
         )
 
-        import pdb; pdb.set_trace()
+        
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
@@ -60,4 +60,22 @@ class TestProductViewSet(APITestCase):
 
         self.assertEqual(created_product.title, 'notebook')
         self.assertEqual(created_product.price, 800,00)
+
+    def test_update_product(self):
+        updated_data = {
+            'price': 999
+        }
+        response = self.client.patch(
+            reverse('product-detail', kwargs={'version': 'v1', 'pk': self.product.id}),
+            data=updated_data,
+            content_type='application/json'
+        )
+
+        import pdb; pdb.set_trace()
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        updated_product = Product.objects.get(id=self.product.id)
+
         
+        self.assertEqual(updated_product.price, 999)
