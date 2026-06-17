@@ -14,7 +14,7 @@ class TestCategoryViewSet(APITestCase):
     def setUp(self):
         self.category = CategoryFactory(title='books')
     
-    def test_get_all_cayegory(self):
+    def test_get_all_category(self):
         response = self.client.get(
             reverse('category-list', kwargs={'version': 'v1'})
         )
@@ -22,7 +22,9 @@ class TestCategoryViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         category_data = json.loads(response.content)
 
-        self.assertEqual(category_data[0]['title'], self.category.title)
+        import pdb; pdb.set_trace()
+
+        self.assertEqual(category_data['results'][0]['title'], self.category.title)
     
     def test_create_category(self):
         data = json.dumps({'title': 'technology'})
@@ -32,8 +34,6 @@ class TestCategoryViewSet(APITestCase):
             data=data,
             content_type='application/json'
         )
-
-        import pdb; pdb.set_trace()
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
