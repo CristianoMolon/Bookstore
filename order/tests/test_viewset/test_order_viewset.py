@@ -14,11 +14,16 @@ from order.models import Order
 class TestOrderViewSet(APITestCase):
 
     def setUp(self):
+        self.user = UserFactory()
         self.category = CategoryFactory(title='Cellphones')
         self.product = ProductFactory(title='Iphone', price=100, category=[self.category])
         self.Order = OrderFactory(product=[self.product])
+        token = Token.objects.create(user=self.user)
+        token.save()
     
     def test_order(self):
+        token = Token.objects.get(user__username=self.user.username)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         response = self.client.get(
             reverse('order-list', kwargs={'version': 'v1'})
         )
@@ -32,6 +37,8 @@ class TestOrderViewSet(APITestCase):
         self.assertEqual(order_data['results'][0]['product'][0]['category'][0]['title'], self.category.title)
 
     def test_create_order(self):
+        token = Token.objects.get(user__username=self.user.username)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         user = UserFactory()
         product = ProductFactory()
         data = json.dumps({
@@ -50,6 +57,8 @@ class TestOrderViewSet(APITestCase):
         created_order = Order.objects.get(user=user)
 
     def test_delete_order(self):
+        token = Token.objects.get(user__username=self.user.username)
+        self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         response = self.client.delete(
             reverse('order-detail', kwargs={'version': 'v1', 'pk': self.Order.id})
         )
