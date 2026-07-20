@@ -27,7 +27,7 @@ RUN pip install poetry
 
 RUN apt-get update \
     && apt-get -y install libpq-dev gcc \
-    && pip install psycopg2-binary
+    && pip install psycopg2
 
 WORKDIR $PYSETUP_PATH
 
