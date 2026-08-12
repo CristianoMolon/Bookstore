@@ -7,13 +7,14 @@ from product.models.product import Product
 from product.serializers.category_serializer import CategorySerializer
 from product.serializers.product_serializer import ProductSerializer
 
+
 @pytest.mark.django_db
-
-
 class testProductSerializer(TestCase):
     def setUp(self):
-        self.category = CategoryFactory(title = "Smartphones")
-        self.product = ProductFactory(title = "Iphone", price = 10000, category=[self.category])
+        self.category = CategoryFactory(title="Smartphones")
+        self.product = ProductFactory(
+            title="Iphone", price=10000, category=[self.category]
+        )
 
         self.serializer = ProductSerializer(self.product)
 

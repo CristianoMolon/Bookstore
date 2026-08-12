@@ -11,6 +11,7 @@ from product.factories import CategoryFactory, ProductFactory
 from order.factories import UserFactory, OrderFactory
 from product.models import Product
 
+
 class TestProductViewSet(APITestCase):
     client = APIClient()
 
@@ -20,66 +21,59 @@ class TestProductViewSet(APITestCase):
         token.save()
 
         self.product = ProductFactory(
-            title='pro controller',
+            title="pro controller",
             price=200.00,
         )
-    
+
     def test_get_all_product(self):
         token = Token.objects.get(user__username=self.user.username)
         self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
-        response = self.client.get(
-            reverse('product-list', kwargs={'version': 'v1'})
-        )
+        response = self.client.get(reverse("product-list", kwargs={"version": "v1"}))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         product_data = json.loads(response.content)
 
-        self.assertEqual(product_data['results'][0]['title'], self.product.title)
-        self.assertEqual(product_data['results'][0]['price'], self.product.price)
-        self.assertEqual(product_data['results'][0]['active'], self.product.active)
-    
+        self.assertEqual(product_data["results"][0]["title"], self.product.title)
+        self.assertEqual(product_data["results"][0]["price"], self.product.price)
+        self.assertEqual(product_data["results"][0]["active"], self.product.active)
+
     def test_create_product(self):
         token = Token.objects.get(user__username=self.user.username)
         self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
         category = CategoryFactory()
-        data = json.dumps({
-            'title': 'notebook',
-            'price': 800.00,
-            'categories_id': [category.id]
-        })
-
-        response = self.client.post(
-            reverse('product-list', kwargs={'version': 'v1'}),
-            data=data,
-            content_type='application/json'
+        data = json.dumps(
+            {"title": "notebook", "price": 800.00, "categories_id": [category.id]}
         )
 
-        
+        response = self.client.post(
+            reverse("product-list", kwargs={"version": "v1"}),
+            data=data,
+            content_type="application/json",
+        )
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        created_product = Product.objects.get(title='notebook')
+        created_product = Product.objects.get(title="notebook")
 
-        self.assertEqual(created_product.title, 'notebook')
-        self.assertEqual(created_product.price, 800,00)
+        self.assertEqual(created_product.title, "notebook")
+        self.assertEqual(created_product.price, 800, 00)
 
     def test_update_product(self):
         token = Token.objects.get(user__username=self.user.username)
         self.client.credentials(HTTP_AUTHORIZATION="Token " + token.key)
-        updated_data = {
-            'price': 999
-        }
+        updated_data = {"price": 999}
         response = self.client.patch(
-            reverse('product-detail', kwargs={'version': 'v1', 'pk': self.product.id}),
+            reverse("product-detail", kwargs={"version": "v1", "pk": self.product.id}),
             data=updated_data,
-            content_type='application/json'
+            content_type="application/json",
         )
 
-        import pdb; pdb.set_trace()
+        import pdb
+
+        pdb.set_trace()
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         updated_product = Product.objects.get(id=self.product.id)
 
-        
         self.assertEqual(updated_product.price, 999)
