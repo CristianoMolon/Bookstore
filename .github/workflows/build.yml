@@ -34,8 +34,9 @@ jobs:
       shell: bash
       run: poetry install
 
-    - name: Start Docker Compose services
-        run: docker-compose up -d --build
-
-      - name: Run Tests
-        run: docker-compose exec -T web python manage.py test
+    - name: Test
+      env:
+        DJANGO_ALLOWED_HOSTS: "localhost 127.0.0.1"  # Adicione hosts permitidos
+        SECRET_KEY: "django-insecure-test-key-only"
+      run: |
+        poetry run python manage.py test
