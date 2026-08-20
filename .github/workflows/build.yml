@@ -34,6 +34,9 @@ jobs:
       shell: bash
       run: poetry install
 
+    - name: Start Docker Compose servies
+      run: docker-compose up -d --build
+
     - name: Test
       env:
         DJANGO_ALLOWED_HOSTS: "localhost 127.0.0.1"  # Adicione hosts permitidos
